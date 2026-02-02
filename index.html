@@ -192,22 +192,6 @@
       position: relative;
     }
 
-    .paper::before{
-      /* 사진 앨범 느낌: 상단 얇은 테이프 */
-      content:"";
-      position:absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 16px;
-      background: rgba(138,143,150,0.18);
-      border: 1px solid rgba(138,143,150,0.22);
-      border-radius: 6px;
-      filter: blur(0.2px);
-      opacity: 0.9;
-      pointer-events:none;
-    }
 
     .section{
       padding: 26px 18px 22px;
@@ -469,13 +453,12 @@
   <header>
     <div class="header-inner">
       <div class="brand">
-        <h1>소꿉친구</h1>
-        <small>우리의 추억</small>
+        <h1>우린 소꿉친구라니깐?</h1>
       </div>
       <nav>
         <button class="nav-btn active" data-menu="character">캐릭터 소개</button>
-        <button class="nav-btn" data-menu="prologue">프롤로그</button>
         <button class="nav-btn" data-menu="album">앨범</button>
+        <button class="nav-btn" data-menu="prologue">프롤로그</button>
       </nav>
     </div>
   </header>
@@ -516,6 +499,9 @@
                 <div class="k">특징</div>
                 <div class="v">은발 은안 요염하면서도 장난기 많은 얼굴</div>
               </li>
+              <li class="profile-item">
+                <div class="k">소개</div>
+                <div class="v">어릴때부터 함께 해온 소꿉친구</div>
             </ul>
           </div>
         </div>
@@ -603,7 +589,7 @@
       <div class="cap">중학교 교실</div>
   </div>
 
-    <!-- 썸네일 8 -->
+    <!-- 썸네일 7 -->
     <div class="thumb"
          data-src="https://myammoong.uk/8.png"
          data-cap="고등학교도 같은 학교라 기뻤어.">
@@ -615,15 +601,15 @@
     <div class="thumb"
          data-src="https://myammoong.uk/9.png"
          data-cap="너랑 같은 대학교에 가고 싶었어.">
-      <img src="https://myammoong.uk/9png" alt="앨범 8">
+      <img src="https://myammoong.uk/9.png" alt="앨범 8">
       <div class="cap">카페에서 함께 공부</div>
   </div>
 
     <!-- 썸네일 9 -->
     <div class="thumb"
-         data-src="https://myammoong.uk/10.png"
+         data-src="https://myammoong.uk/11.png"
          data-cap="정신없었지만 설렜어.">
-      <img src="https://myammoong.uk/10png" alt="앨범 9">
+      <img src="https://myammoong.uk/11.png" alt="앨범 9">
       <div class="cap">동거 시작</div>
   </div>
 </section>
