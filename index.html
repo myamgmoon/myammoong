@@ -1,174 +1,690 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>벚꽃의 기억</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Gaegu&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>벚꽃의 기억</title>
 
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #fff0f5; color: #5d4037;
-            overflow-x: hidden;
-        }
+  <!-- 폰트: 부드러운 본문 + 손글씨 포인트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
 
-        /* 벚꽃 효과 */
-        .sakura {
-            position: absolute; background-color: #ffc0cb;
-            border-radius: 100% 0 100% 0; opacity: 0.6;
-            animation: fall linear infinite; pointer-events: none; z-index: 999;
-        }
-        @keyframes fall {
-            to { opacity: 0; top: 100%; transform: translateX(100px) rotate(360deg); }
-        }
+  <style>
+    :root{
+      /* Cozy Home: brown + gray */
+      --bg: #f5f2ee;
+      --paper: #fbfaf8;
+      --ink: #3b2f2a;
+      --muted: #6a5f58;
+      --line: rgba(60,45,38,0.12);
 
-        /* 헤더 */
-        header {
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);
-            padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100;
-        }
-        h1 { font-family: 'Gaegu', cursive; color: #ff6f91; margin: 0 0 15px 0; }
-        
-        /* 메뉴 버튼 */
-        nav { display: flex; justify-content: center; gap: 15px; }
-        .nav-btn {
-            border: 2px solid #ffb7c5; background: white;
-            padding: 8px 20px; border-radius: 20px; cursor: pointer;
-            font-weight: bold; color: #5d4037; transition: 0.3s;
-        }
-        .nav-btn.active, .nav-btn:hover {
-            background: #ffb7c5; color: white; transform: translateY(-2px);
-        }
+      --accent: #a77b5b;    /* 따뜻한 브라운 */
+      --accent2: #8a8f96;   /* 차분한 그레이 */
+      --cherry: rgba(255, 183, 197, 0.45); /* 벚꽃 잔향만 */
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
 
-        /* 메인 컨텐츠 */
-        main {
-            max-width: 800px; margin: 30px auto; padding: 20px;
-            background: rgba(255,255,255,0.9); border-radius: 20px;
-            min-height: 500px; text-align: center;
-        }
-        
-        /* 섹션 전환 */
-        .content-section { display: none; animation: fadeIn 0.5s; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      --max: 980px;
+    }
 
-        img { max-width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        .profile-img { width: 300px; height: 400px; object-fit: cover; border: 5px solid #ffb7c5; }
-        
-        /* 시작 오버레이 (클릭 유도용) */
-        #start-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            color: white; font-size: 2rem; flex-direction: column; cursor: pointer;
-        }
-    </style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans KR", system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(167,123,91,0.10), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(138,143,150,0.10), transparent 55%),
+                  linear-gradient(180deg, var(--bg), #efeae4 70%, #ece6df);
+      overflow-x: hidden;
+    }
+
+    /* ====== Start Overlay ====== */
+    #start-overlay {
+      position: fixed; inset: 0;
+      background: rgba(25, 20, 18, 0.78);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+    }
+    .overlay-card{
+      width: min(520px, 100%);
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 22px 18px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .overlay-title{
+      font-family: "Gaegu", cursive;
+      font-size: 2rem;
+      margin: 0 0 8px 0;
+      color: var(--accent);
+    }
+    .overlay-sub{
+      margin: 0 0 16px 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+    .overlay-actions{
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .btn{
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(167,123,91,0.18), rgba(167,123,91,0.05));
+      border-color: rgba(167,123,91,0.35);
+    }
+    .btn.ghost{
+      background: transparent;
+    }
+
+    /* ====== Sakura (subtle) ====== */
+    #sakura-container{
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      overflow: hidden;
+    }
+    .sakura {
+      position: absolute;
+      width: 10px; height: 10px;
+      background: var(--cherry);
+      border-radius: 100% 0 100% 0;
+      opacity: 0.7;
+      animation: fall linear infinite;
+      filter: blur(0.2px);
+      will-change: transform, opacity, top;
+    }
+    @keyframes fall {
+      to { opacity: 0; top: 110%; transform: translateX(80px) rotate(420deg); }
+    }
+
+    /* ====== Header / Nav ====== */
+    header{
+      position: sticky; top: 0;
+      z-index: 200;
+      background: rgba(251, 250, 248, 0.78);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+    .header-inner{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand{
+      display: flex; flex-direction: column; gap: 2px;
+      min-width: 160px;
+    }
+    .brand h1{
+      margin: 0;
+      font-family: "Gaegu", cursive;
+      font-size: 1.55rem;
+      color: var(--accent);
+      letter-spacing: 0.2px;
+      line-height: 1.1;
+    }
+    .brand small{
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    nav{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav-btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.85);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--ink);
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(167,123,91,0.35);
+    }
+    .nav-btn.active{
+      background: linear-gradient(180deg, rgba(167,123,91,0.20), rgba(167,123,91,0.06));
+      border-color: rgba(167,123,91,0.35);
+      color: var(--ink);
+    }
+
+    /* ====== Main Layout ====== */
+    main{
+      max-width: var(--max);
+      margin: 18px auto 46px;
+      padding: 0 16px;
+    }
+
+    .paper{
+      background: rgba(251, 250, 248, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .paper::before{
+      /* 사진 앨범 느낌: 상단 얇은 테이프 */
+      content:"";
+      position:absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 16px;
+      background: rgba(138,143,150,0.18);
+      border: 1px solid rgba(138,143,150,0.22);
+      border-radius: 6px;
+      filter: blur(0.2px);
+      opacity: 0.9;
+      pointer-events:none;
+    }
+
+    .section{
+      padding: 26px 18px 22px;
+      text-align: left;
+    }
+
+    .section-title{
+      margin: 0 0 10px 0;
+      font-size: 1.25rem;
+      letter-spacing: -0.2px;
+    }
+    .section-desc{
+      margin: 0 0 16px 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.98rem;
+    }
+
+    /* ====== Section switching ====== */
+    .content-section{ display:none; animation: fadeIn .25s ease; }
+    .content-section.active{ display:block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
+
+    /* ====== Character (Profile) ====== */
+    .profile-wrap{
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .photo-frame{
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    }
+    .photo-frame img{
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .photo-caption{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .profile-card{
+      background: rgba(255,255,255,0.65);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 14px;
+    }
+    .profile-list{
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .profile-item{
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 10px;
+      align-items: baseline;
+      padding: 10px 10px;
+      border-radius: 12px;
+      background: rgba(167,123,91,0.06);
+      border: 1px solid rgba(167,123,91,0.12);
+    }
+    .k{
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .v{
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    /* ====== Prologue (webtoon vertical) ====== */
+    .webtoon{
+      display: grid;
+      gap: 12px;
+    }
+    .webtoon img{
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+      background: #fff;
+    }
+    .webtoon-note{
+      margin-top: 12px;
+      padding: 12px 12px;
+      background: rgba(138,143,150,0.08);
+      border: 1px dashed rgba(138,143,150,0.22);
+      border-radius: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    /* ====== Album (photo album grid + lightbox) ====== */
+    .album-grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .thumb{
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .thumb img{
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      transition: transform .25s ease;
+    }
+    .thumb:hover img{ transform: scale(1.03); }
+    .thumb .cap{
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      background: rgba(251,250,248,0.92);
+      line-height: 1.5;
+    }
+
+    /* Lightbox */
+    #lightbox{
+      position: fixed; inset: 0;
+      background: rgba(20,16,14,0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      padding: 18px;
+    }
+    #lightbox.active{ display:flex; }
+    .lightbox-card{
+      width: min(980px, 100%);
+      background: rgba(251,250,248,0.96);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .lightbox-img{
+      width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      display: block;
+      background: #111;
+    }
+    .lightbox-bar{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      background: rgba(251,250,248,0.98);
+    }
+    .lightbox-cap{
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.4;
+      padding-right: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 72%;
+    }
+    .xbtn{
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    /* ====== Footer ====== */
+    footer{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 16px 24px;
+      color: rgba(59,47,42,0.55);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    /* ====== Mobile ====== */
+    @media (max-width: 860px){
+      .profile-wrap{
+        grid-template-columns: 1fr;
+      }
+      .photo-frame img{ height: 360px; }
+      .album-grid{ grid-template-columns: repeat(2, 1fr); }
+      .header-inner{
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      nav{ justify-content: flex-start; }
+    }
+    @media (max-width: 520px){
+      .album-grid{ grid-template-columns: 1fr; }
+      .thumb img{ height: 240px; }
+      .brand h1{ font-size: 1.45rem; }
+      .nav-btn{ padding: 10px 12px; }
+      .section{ padding: 22px 14px 18px; }
+    }
+  </style>
 </head>
+
 <body>
-
-    <div id="start-overlay" onclick="startSite()">
-        <p>🌸 화면을 클릭하면 시작됩니다</p>
-        <span style="font-size: 1rem;">(음악이 함께 재생됩니다)</span>
+  <!-- Start overlay -->
+  <div id="start-overlay">
+    <div class="overlay-card">
+      <p class="overlay-title">벚꽃의 기억</p>
+      <p class="overlay-sub">
+        따뜻한 집의 공기처럼, 조용히 페이지를 열어볼까요.<br/>
+        원하면 배경음악도 함께 재생할 수 있어요.
+      </p>
+      <div class="overlay-actions">
+        <button class="btn primary" id="btnStartBgm">🌸 시작하기 (BGM ON)</button>
+        <button class="btn ghost" id="btnStartSilent">시작하기 (무음)</button>
+      </div>
+      <p class="overlay-sub" style="margin-top:12px; font-size:0.85rem;">
+        * 모바일 브라우저 정책상 “버튼 클릭 후”에만 오디오가 재생돼요.
+      </p>
     </div>
+  </div>
 
-    <audio id="bgm" loop>
-        <source src="index.mp3" type="audio/mp3">
-    </audio>
+  <!-- BGM -->
+  <audio id="bgm" loop preload="auto">
+    <!-- 같은 폴더에 index.mp3를 두거나, R2 URL로 교체 -->
+    <source src="index.mp3" type="audio/mp3">
+  </audio>
 
-    <div id="sakura-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
+  <!-- Sakura layer -->
+  <div id="sakura-container"></div>
 
-    <header>
-        <h1>🌸 Cherry Blossom Memory</h1>
-        <nav>
-            <button class="nav-btn active" onclick="changeMenu('character', this)">캐릭터 소개</button>
-            <button class="nav-btn" onclick="changeMenu('prologue', this)">프롤로그</button>
-            <button class="nav-btn" onclick="changeMenu('gallery', this)">이미지</button>
-        </nav>
-    </header>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>Cherry Blossom Memory</h1>
+        <small>동거하는 집, 잔잔한 앨범처럼</small>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-menu="character">캐릭터 소개</button>
+        <button class="nav-btn" data-menu="prologue">프롤로그</button>
+        <button class="nav-btn" data-menu="album">앨범</button>
+      </nav>
+    </div>
+  </header>
 
-    <main>
-        <section id="character" class="content-section active">
-            <h2>Profile</h2>
-            <img src="img1.jpg" class="profile-img" alt="캐릭터 사진">
-            <div style="text-align: left; display: inline-block; background: #fff0f5; padding: 20px; border-radius: 10px;">
-                <p><strong>이름:</strong> (이름 입력)</p>
-                <p><strong>나이:</strong> 18세</p>
-                <p><strong>특징:</strong> 금발, 호박색 눈동자, 벚꽃을 닮은 미소</p>
+  <main>
+    <div class="paper">
+      <!-- Character -->
+      <section id="character" class="content-section active section">
+        <h2 class="section-title">캐릭터 소개</h2>
+        <p class="section-desc">
+          따뜻한 브라운 톤의 집 안, 오래된 사진첩을 넘기듯 천천히 소개할게요.
+        </p>
+
+        <div class="profile-wrap">
+          <div class="photo-frame">
+            <!-- 여기를 R2/커스텀 도메인 이미지로 교체 -->
+            <img src="img1.jpg" alt="캐릭터 사진">
+            <div class="photo-caption">
+              예: 창가에서 웃는 모습 — “집은 늘 너의 편.”
             </div>
-        </section>
+          </div>
 
-        <section id="prologue" class="content-section">
-            <h2>Prologue</h2>
-            <img src="img2.jpg" style="max-height: 400px; object-fit: cover;" alt="스토리 사진">
-            <p style="line-height: 1.8;">
-                4월의 어느 날, 흩날리는 벚꽃 사이로 그녀가 보였다.<br>
-                호박색 눈동자가 나를 향해 빛났을 때,<br>
-                내 세상은 온통 봄으로 물들기 시작했다.
-            </p>
-        </section>
+          <div class="profile-card">
+            <ul class="profile-list">
+              <li class="profile-item">
+                <div class="k">이름</div>
+                <div class="v">(이름 입력)</div>
+              </li>
+              <li class="profile-item">
+                <div class="k">나이</div>
+                <div class="v">18세</div>
+              </li>
+              <li class="profile-item">
+                <div class="k">분위기</div>
+                <div class="v">나긋하고 편안함, 유저에게만 살짝 장난기</div>
+              </li>
+              <li class="profile-item">
+                <div class="k">특징</div>
+                <div class="v">금발, 호박색 눈동자, 벚꽃 같은 미소</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
-        <section id="gallery" class="content-section">
-            <h2>Gallery</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                <img src="img1.jpg" style="height:250px; width:100%; object-fit:cover;">
-                <img src="img2.jpg" style="height:250px; width:100%; object-fit:cover;">
-                <img src="img3.jpg" style="height:250px; width:100%; object-fit:cover;">
-            </div>
-        </section>
-    </main>
+      <!-- Prologue (vertical webtoon) -->
+      <section id="prologue" class="content-section section">
+        <h2 class="section-title">프롤로그</h2>
+        <p class="section-desc">
+          웹툰은 세로 스크롤로 자연스럽게 이어져요. (이미지 파일을 순서대로 넣기)
+        </p>
 
-    <script>
-        // 사이트 시작 기능 (오버레이 제거 + 음악 재생)
-        function startSite() {
-            var overlay = document.getElementById('start-overlay');
-            var audio = document.getElementById('bgm');
-            
-            overlay.style.display = 'none'; // 검은 화면 끄기
-            
-            // 음악 재생 시도
-            audio.play().catch(function(error) {
-                console.log("음악 재생 실패: " + error);
-                alert("음악 파일을 찾을 수 없거나 재생할 수 없습니다.\n파일 이름이 bgm.mp3 인지 확인해주세요.");
-            });
-        }
+        <div class="webtoon">
+          <!-- 웹툰 컷 이미지들을 위에서 아래로 순서대로 추가 -->
+          <img src="https://myammoong.uk/webtoon01.png" alt="프롤로그 1">
+          <img src="https://myammoong.uk/webtoon02.png" alt="프롤로그 2">
+          <img src="https://myammoong.uk/webtoon03.png" alt="프롤로그 3">
+          <img src="https://myammoong.uk/webtoon04.png" alt="프롤로그 4">
+          <img src="https://myammoong.uk/webtoon05.png" alt="프롤로그 5">
+          <img src="https://myammoong.uk/webtoon06.png" alt="프롤로그 6">
+          <img src="https://myammoong.uk/webtoon07.png" alt="프롤로그 7">
+          <img src="https://myammoong.uk/webtoon08.png" alt="프롤로그 8">
+          <img src="https://myammoong.uk/webtoon09.png" alt="프롤로그 9">
+          <img src="https://myammoong.uk/webtoon10.png" alt="프롤로그 10">
+        </div>
 
-        // 메뉴 변경 기능
-        function changeMenu(menuId, btn) {
-            // 1. 모든 섹션 숨기기
-            var sections = document.querySelectorAll('.content-section');
-            sections.forEach(function(sec) {
-                sec.classList.remove('active');
-            });
+        <div class="webtoon-note">
+          팁: 웹툰 이미지는 가로 1080~1440px 정도로 뽑아두면 모바일에서도 선명해요.
+        </div>
+      </section>
 
-            // 2. 선택한 섹션만 보이기
-            var target = document.getElementById(menuId);
-            if (target) {
-                target.classList.add('active');
-            } else {
-                alert("해당 메뉴를 찾을 수 없습니다: " + menuId);
-            }
+      <!-- Album -->
+      <section id="album" class="content-section section">
+        <h2 class="section-title">앨범</h2>
+        <p class="section-desc">
+          사진을 누르면 크게 볼 수 있어요. (사진첩 감성 + 라이트박스)
+        </p>
 
-            // 3. 버튼 스타일 변경
-            var buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach(function(b) {
-                b.classList.remove('active');
-            });
-            btn.classList.add('active');
-        }
+        <div class="album-grid" id="albumGrid">
+          <!-- 썸네일 1 -->
+          <div class="thumb" data-src="img1.jpg" data-cap="집 거실, 오후의 햇빛">
+            <img src="img1.jpg" alt="앨범 1">
+            <div class="cap">집 거실, 오후의 햇빛</div>
+          </div>
 
-        // 벚꽃 생성 (단순화)
-        setInterval(function() {
-            var div = document.createElement('div');
-            div.className = 'sakura';
-            div.style.left = Math.random() * 100 + '%';
-            div.style.width = (Math.random() * 10 + 5) + 'px';
-            div.style.height = div.style.width;
-            div.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            document.getElementById('sakura-container').appendChild(div);
-            setTimeout(function() { div.remove(); }, 5000);
-        }, 300);
-    </script>
+          <!-- 썸네일 2 -->
+          <div class="thumb" data-src="img2.jpg" data-cap="주방, 따뜻한 머그컵">
+            <img src="img2.jpg" alt="앨범 2">
+            <div class="cap">주방, 따뜻한 머그컵</div>
+          </div>
+
+          <!-- 썸네일 3 -->
+          <div class="thumb" data-src="img3.jpg" data-cap="밤, 조용한 복도">
+            <img src="img3.jpg" alt="앨범 3">
+            <div class="cap">밤, 조용한 복도</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    © Cherry Blossom Memory — cozy home album
+  </footer>
+
+  <!-- Lightbox -->
+  <div id="lightbox" aria-hidden="true">
+    <div class="lightbox-card">
+      <img id="lightboxImg" class="lightbox-img" src="" alt="확대 이미지">
+      <div class="lightbox-bar">
+        <div id="lightboxCap" class="lightbox-cap"></div>
+        <button class="xbtn" id="lightboxClose">닫기 ✕</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Start overlay / BGM ======
+    const overlay = document.getElementById('start-overlay');
+    const audio = document.getElementById('bgm');
+    const btnStartBgm = document.getElementById('btnStartBgm');
+    const btnStartSilent = document.getElementById('btnStartSilent');
+
+    function hideOverlay(){
+      overlay.style.display = 'none';
+    }
+
+    btnStartBgm.addEventListener('click', () => {
+      hideOverlay();
+      audio.play().catch((err) => {
+        console.log("음악 재생 실패:", err);
+        // 파일이 없거나 정책/포맷 문제일 때 조용히 무음으로 진행
+      });
+    });
+
+    btnStartSilent.addEventListener('click', () => {
+      hideOverlay();
+    });
+
+    // ====== Menu switching ======
+    const buttons = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('.content-section');
+
+    function showSection(id){
+      sections.forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+      // 상단으로 살짝 올려주기(모바일에서 메뉴 누르면 좋아)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showSection(btn.dataset.menu);
+      });
+    });
+
+    // ====== Sakura: subtle & lighter for performance ======
+    const sakuraContainer = document.getElementById('sakura-container');
+    function createSakura(){
+      const div = document.createElement('div');
+      div.className = 'sakura';
+      div.style.left = (Math.random() * 100) + '%';
+      const size = (Math.random() * 8 + 6);
+      div.style.width = size + 'px';
+      div.style.height = size + 'px';
+      div.style.top = (-10 - Math.random() * 20) + 'px';
+      div.style.animationDuration = (Math.random() * 4 + 4) + 's'; // 4~8s
+      div.style.opacity = (Math.random() * 0.35 + 0.35).toFixed(2);
+      sakuraContainer.appendChild(div);
+      setTimeout(() => div.remove(), 9000);
+    }
+    // 너무 과하지 않게
+    setInterval(createSakura, 550);
+
+    // ====== Lightbox (Album) ======
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCap = document.getElementById('lightboxCap');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    function openLightbox(src, cap){
+      lightboxImg.src = src;
+      lightboxCap.textContent = cap || '';
+      lightbox.classList.add('active');
+      lightbox.setAttribute('aria-hidden', 'false');
+    }
+    function closeLightbox(){
+      lightbox.classList.remove('active');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lightboxImg.src = '';
+      lightboxCap.textContent = '';
+    }
+
+    document.getElementById('albumGrid').addEventListener('click', (e) => {
+      const thumb = e.target.closest('.thumb');
+      if (!thumb) return;
+      openLightbox(thumb.dataset.src, thumb.dataset.cap);
+    });
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
 </body>
 </html>
